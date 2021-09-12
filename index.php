@@ -64,7 +64,7 @@ if(file_exists('settings.php')){
       },0)
     </script>
     <div id="loader" class="loading initial">
-      <span id="force">If your browser is stuck, you can go to <?php echo getenv('APP_SITE_PATH')."apps/c0lorize-web/?clear=true"; ?>
+      <span id="force">If your browser is stuck, you can go to <?php echo $settings['c0lorize_site_path']."?clear=true"; ?>
         to force your localStorage to clear out. Sometimes this can happen if you attempt to convert too large of an image. THIS WILL DELETE YOUR DATA!</span>
       <span id="load_char"></span>
     </div>
@@ -88,7 +88,7 @@ if(file_exists('settings.php')){
 
       <button id="clear_page">Clear</button>
 
-      <span id="about"><b>c0lorize</b> for web by <a href="<?php getenv('APP_SITE_PATH'); ?>">z0m.bi</a>. | <a id="wtf">WTF is this thing?</a></span>
+      <span id="about"><b>c0lorize</b> for web by <a href="https://z0m.bi/">z0m.bi</a>. | <a id="wtf">WTF is this thing?</a></span>
     </div>
     <?php include "inc/wtf_is_this.html"; ?>
     <div id="ascii_color_matching">
