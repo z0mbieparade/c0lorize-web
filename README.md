@@ -6,13 +6,13 @@ So... here's a front end for my old <a href="https://github.com/z0mbieparade/c0l
 
  A few useful points of interest:
 
-The ![settings](css/images/settings.svg =20x20)  icon on the right lets you change the text editor settings. You can upload a background image to "trace" with whatever text you want. You can adjust the background color and font color and any number of other things that might make your life easier when hand-drawing ascii art.
+The <img alt="settings" src="https://raw.githubusercontent.com/z0mbieparade/c0lorize-web/main/css/images/settings.svg" width="20" height="20" /> icon on the right lets you change the text editor settings. You can upload a background image to "trace" with whatever text you want. You can adjust the background color and font color and any number of other things that might make your life easier when hand-drawing ascii art.
 
-The ![convert](css/images/convert.svg =20x20) icon next to it is if you want to run aalib over the background image you've uploaded. It's not perfect, and the colors are restricted to the 16 foreground/background colors IRC allows, so it can get pretty wacky looking. There are multiple settings you can fiddle with to try and make something not horrible looking. Keep  in mind, clicking **[Convert Image to ASCII]** will erase anything you currently have in your editor.
+The <img alt="convert" src="https://raw.githubusercontent.com/z0mbieparade/c0lorize-web/main/css/images/convert.svg" width="20" height="20" /> icon next to it is if you want to run aalib over the background image you've uploaded. It's not perfect, and the colors are restricted to the 16 foreground/background colors IRC allows, so it can get pretty wacky looking. There are multiple settings you can fiddle with to try and make something not horrible looking. Keep  in mind, clicking **[Convert Image to ASCII]** will erase anything you currently have in your editor.
 
-The ![filter](css/images/filter.svg =20x20) icon contains a bunch of filters you can use.
+The <img alt="filter" src="https://raw.githubusercontent.com/z0mbieparade/c0lorize-web/main/css/images/filter.svg" width="20" height="20" /> icon contains a bunch of filters you can use.
 
-The toggle switch next to the ![settings](css/images/settings.svg =20x20) that swaps from colored to text, shows you the original plain text format that  the original c0lorize script used. You can download this by clicking the **[Download Text]** button at the top.
+The toggle switch next to the <img alt="settings" src="https://raw.githubusercontent.com/z0mbieparade/c0lorize-web/main/css/images/settings.svg" width="20" height="20" /> that swaps from colored to text, shows you the original plain text format that  the original c0lorize script used. You can download this by clicking the **[Download Text]** button at the top.
 
 **[Download HTML]** downloads an html file of what you made, incase you want to use it on the web somewhere.
 
