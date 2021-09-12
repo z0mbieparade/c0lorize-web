@@ -1,12 +1,25 @@
 <?php
-include('settings_default.php');
-$default_settings = $settings;
+require('settings_default.php');
+$set = $settings;
 $setup = false;
 if(file_exists('settings.php')){
 	include('settings.php');
-	$settings = array_merge($default_settings, $settings);
+	foreach($settings as $key => $val){
+		$set[$key] = $val;
+	}
 	$setup = true;
-}?>
+}
+if(file_exists('../all_settings.php')){
+	include('../all_settings.php');
+	if(isset($all_settings['c0lorize-web'])){
+		foreach($all_settings['c0lorize-web'] as $key => $val){
+			$set[$key] = $val;
+		}
+		$setup = true;
+	}
+}
+$settings = $set;
+?>
 <!DOCTYPE html>
 <html lang="en">
   <title><?php echo $settings['title']; ?></title>
