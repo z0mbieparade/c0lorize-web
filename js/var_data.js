@@ -222,9 +222,9 @@ let settings = {
     type: 'boolean',
     on_change: function($this){
       if(this.value){
-        $('#text_wrap').addClass('show_bg');
+        $('#text_html_wrap').addClass('show_bg');
       } else {
-        $('#text_wrap').removeClass('show_bg');
+        $('#text_html_wrap').removeClass('show_bg');
       }
     }
   },
@@ -233,6 +233,7 @@ let settings = {
     type: 'number',
     on_change: function($this){
       $('#text_wrap').css('background-position-x', this.value + 'px');
+      $('#html_wrap_side_by_side').css('background-position-x', this.value + 'px');
     }
   },
   bg_y: {
@@ -240,6 +241,7 @@ let settings = {
     type: 'number',
     on_change: function($this){
       $('#text_wrap').css('background-position-y', this.value + 'px');
+      $('#html_wrap_side_by_side').css('background-position-y', this.value + 'px');
     }
   },
   bg_size: {
@@ -249,6 +251,7 @@ let settings = {
       if(this.value !== '' && this.value !== null){
         let size = this.value + settings.bg_size_type.value;
         $('#text_wrap').css('background-size', size);
+        $('#html_wrap_side_by_side').css('background-size', size);
         $('#bg_size_type').removeAttr('disabled');
       }
       else
@@ -264,6 +267,7 @@ let settings = {
       if(settings.bg_size.value !== '' && settings.bg_size.value !== null){
         let size = settings.bg_size.value + this.value;
         $('#text_wrap').css('background-size', size);
+        $('#html_wrap_side_by_side').css('background-size', size);
       }
     }
   },
@@ -275,6 +279,7 @@ let settings = {
       if(settings.show_bg_img.value && !settings.bg_img_url.value && this.value){
         $('#show_bg_img').removeAttr('disabled');
         $('#text_wrap').css('background-image', 'url(' + this.value + ')');
+        $('#html_wrap_side_by_side').css('background-image', 'url(' + this.value + ')');
 
         this.image = new Image();
         this.image.src = this.value;
@@ -289,6 +294,7 @@ let settings = {
 
           $('#show_bg_img').removeAttr('disabled');
           $('#text_wrap').css('background-image', 'url(' + settings.bg_img.image.src + ')');
+          $('#html_wrap_side_by_side').css('background-image', 'url(' + settings.bg_img.image.src + ')');
 
           cdat.get_image_colors(settings.bg_img.image, false);
         }
@@ -315,6 +321,7 @@ let settings = {
 
               $('#show_bg_img').removeAttr('disabled');
               $('#text_wrap').css('background-image', 'url(' + reader.result + ')');
+              $('#html_wrap_side_by_side').css('background-image', 'url(' + reader.result + ')');
 
               page.toggle_ascii_settings();
 
@@ -353,6 +360,7 @@ let settings = {
 
             $('#show_bg_img').removeAttr('disabled');
             $('#text_wrap').css('background-image', 'url(' + url + ')');
+            $('#html_wrap_side_by_side').css('background-image', 'url(' + url + ')');
 
             page.toggle_ascii_settings();
 
@@ -377,6 +385,7 @@ let settings = {
 
             $('#show_bg_img').removeAttr('disabled');
             $('#text_wrap').css('background-image', 'url(' + url + ')');
+            $('#html_wrap_side_by_side').css('background-image', 'url(' + url + ')');
 
             page.toggle_ascii_settings();
 
@@ -405,6 +414,57 @@ let settings = {
       }
     }
   },
+  tab_or_panel: {
+    default: true,
+    type: 'boolean',
+    on_change: function()
+    {
+      if(this.value)
+      {
+        $('#tabs').addClass('side_by_side');
+      }
+      else
+      {
+        $('#tabs').removeClass('side_by_side');
+      }
+    }
+  },
+  char_popout: {
+    default: false,
+    type: 'boolean',
+    on_change: function()
+    {
+      if(this.value)
+      {
+        $( "#char_panel" ).dialog({
+          title: 'Characters',
+          dialogClass: "char_dialog",
+          width: 205,
+          close: function() {
+            page.set_val('char_popout', false);
+          }
+        });
+      }
+    }
+  },
+  style_popout: {
+    default: false,
+    type: 'boolean',
+    on_change: function()
+    {
+      if(this.value)
+      {
+        $( "#style_panel" ).dialog({
+          title: 'Styles',
+          dialogClass: "style_dialog",
+          width: 146,
+          close: function() {
+            page.set_val('style_popout', false);
+          }
+        });
+      }
+    }
+  },
   text_data: {
     default: '',
     type: 'string',
@@ -422,6 +482,11 @@ let settings = {
         });
 
         $('#text_wrap').css({
+          'min-height': ($('#textarea_sizer').height() + 100),
+          'min-width': $('#textarea_sizer').width()
+        });
+
+        $('#html_wrap_side_by_side').css({
           'min-height': ($('#textarea_sizer').height() + 100),
           'min-width': $('#textarea_sizer').width()
         });

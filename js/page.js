@@ -193,6 +193,19 @@ class Page
         });
       $('#fg_color_panel .row').append($fg_color);
       $('#bg_color_panel .row').append($bg_color);
+
+      let $popout_fg_color = $('<button class="color bg' + color.irc + '" txt="' + color.match[0] + '"></button>')
+        .on('click', function()
+        {
+          insert_char('&' + $(this).attr('txt'));
+        });
+      let $popout_bg_color = $('<button class="color bg' + color.irc + '" txt="' + color.match[0] + '"></button>')
+        .on('click', function()
+        {
+          insert_char('&bg' + $(this).attr('txt'));
+        });
+      $('#fg_color_panel_p .row').append($popout_fg_color);
+      $('#bg_color_panel_p .row').append($popout_bg_color);
     })
 
     //create style buttons
@@ -203,7 +216,13 @@ class Page
         {
           insert_char('&bg' + $(this).attr('txt'));
         });
+      let $popout_style = $('<button class="' + style.irc + '" txt="' + style.irc + '">' + style.irc + '</button>')
+        .on('click', function()
+        {
+          insert_char('&bg' + $(this).attr('txt'));
+        });
       $('#styles #style').append($style);
+      $('#style_panel #style_p').append($popout_style);
     })
 
     //create character buttons
@@ -212,30 +231,49 @@ class Page
       {
         let $button = $('<button id="char_' + type + '_' + style + '" class="panel_open"></button>');
         let $row = $('<div class="row"></div>');
+        let $popout_row = $('<div class="row"></div>');
 
         chars[type][style].chars.forEach(function(char, i)
         {
           if(i === 0) $button.text(char);
 
           let $char = $('<div class="char_space"></div>');
+          let $popout_char = $('<div class="char_space"></div>');
           if(char !== ' ')
           {
             $char = $('<button class="char">' + char + '</button>')
               .on('click', function(){
                 insert_char($(this).text());
               });
+            $popout_char = $('<button class="char">' + char + '</button>')
+              .on('click', function(){
+                insert_char($(this).text());
+              });
           }
           $row.append($char);
+          $popout_row.append($popout_char);
         })
 
         let $panel = $('<div id="char_' + type + '_' + style + '_panel" class="panel"></div>')
                         .css('width', ((chars[type][style].cols * 18) + 10) + 'px').append($row);
+        let $popout_panel = $('<div id="char_' + type + '_' + style + '_panel" class="panel"></div>')
+                        .css('width', ((chars[type][style].cols * 18) + 10) + 'px').append($popout_row);
 
         let $panel_wrap = $('<div class="panel_wrap"></div>').append($button).append($panel);
 
         $('#chars').append($panel_wrap);
+        $('#char_panel').append($popout_panel);
       }
     }
+
+    //make dialogs open on click
+    let _this = this;
+    $('.open_dialog').each(function(){
+      let $this = $(this);
+      $this.on('click', function(){
+        _this.set_val($this.attr('id'), true);
+      });
+    })
   }
 
   //sets the value of a settings input, fires on change, updates the value

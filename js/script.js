@@ -61,8 +61,14 @@ let update_html = function()
 {
   parse.text_to_html($('#text_data').val(), function(html_doc_data, irc_data, editor_data)
   {
-    let $iframe = $('<iframe />').attr('src', 'data:text/html;charset=utf-8,' + encodeURI(html_doc_data));
-    $('#html #html_wrap').empty().append($iframe);
+    let $iframe = $('<iframe allowtransparency="true" />').attr('src', 'data:text/html;charset=utf-8,' + encodeURI(html_doc_data));
+
+    if(settings.tab_or_panel.value){
+      $('#html_wrap_side_by_side').empty().append($iframe);
+    } else {
+      $('#html #html_wrap').empty().append($iframe);
+    }
+
     editor.setContents(editor_data, 'silent');
 
     let plain_text = editor.getText();

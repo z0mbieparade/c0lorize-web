@@ -125,7 +125,9 @@ $settings = $set;
             </div>
             <div id="style"></div>
           </div>
+					<div id="style_popout" class="open_dialog"></div>
           <div id="chars"></div>
+					<div id="char_popout" class="open_dialog"></div>
 
           <div class="panel" id="text_settings_panel">
             <div class="row">
@@ -377,7 +379,11 @@ $settings = $set;
             </div>
           </div>
           <div class="filler"></div>
-          <label class="switch inside_label">
+          <label id="tab_or_panel_switch" class="switch inside_label">
+            <input type="checkbox" id="tab_or_panel">
+            <span class="slider"></span>
+          </label>
+          <label id="plain_or_rich_switch" class="switch inside_label">
             <input type="checkbox" id="plain_or_rich">
             <span class="slider"></span>
           </label>
@@ -385,10 +391,14 @@ $settings = $set;
           <button class="panel_open convert_icon icon" id="ascii_settings"></button>
           <button class="panel_open filter_icon icon" id="filter_settings"></button>
         </div>
-        <div id="text_wrap">
-          <textarea id="text_data"></textarea>
-          <div id="editor"></div>
-        </div>
+				<div id="text_html_wrap">
+	        <div id="text_wrap">
+	          <textarea id="text_data"></textarea>
+	          <div id="editor"></div>
+	        </div>
+					<div id="html_wrap_side_by_side">
+				</div>
+				</div>
       </div>
       <div id="html">
         <div id="html_wrap"></div>
@@ -396,6 +406,16 @@ $settings = $set;
     </div>
 
     <div id="ascii_html"></div>
+
+		<div id="char_panel"></div>
+		<div id="style_panel">
+			<span class="row_header" id="fg_color_header">Text Color</span>
+			<div class="panel" id="fg_color_panel_p"><div class="row"></div></div>
+			<span class="row_header" id="bg_color_header">Bkg Color</span>
+			<div class="panel" id="bg_color_panel_p"><div class="row"></div></div>
+			<span class="row_header">Text Style</span>
+			<div id="style_p"></div>
+		</div>
 
     <?php include "inc/demo_1.html"; ?>
     <?php include "inc/demo_2.html"; ?>

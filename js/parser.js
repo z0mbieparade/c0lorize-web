@@ -179,9 +179,14 @@ class Parser
   	this.open_tag_count = 0;
     let font = page.fonts_popped ? settings.fonts.value : 'Menlo Regular';
 
+    var bg_color = settings.background_color_no_alpha.value;
+    if(settings.tab_or_panel.value){
+      bg_color = settings.background_color.value;
+    }
+
   	let html_style = Object.assign({
   		'body': {
-  			'background-color': settings.background_color_no_alpha.value,
+  			'background-color': bg_color,
   			'color': settings.default_text_color.value,
   			'margin': 0,
   			'padding': 0,
@@ -197,9 +202,10 @@ class Parser
   			'font-family': "'" + font + "', monospace",
   			'white-space': 'pre',
   			'font-size': settings.font_size.value + 'px',
-  			'line-height': settings.font_size.value + 'px',
+  			'line-height': (settings.font_size.value - 1) + 'px',
   			'height': settings.font_size.value + 'px',
-  			'width': 'fit-content'
+  			'width': 'fit-content',
+        'overflow': 'hidden'
   		},
   		'.b': { 'font-weight': 'bold' },
   		'.i': { 'font-style': 'italic' },
@@ -212,6 +218,7 @@ class Parser
         'text-decoration': 'none'
       }
   	}, this.html_colors);
+
 
   	let style_str = '';
   	this.editor_arr = [];
@@ -250,7 +257,7 @@ class Parser
         {
           font_style = page.font_select[font];
         }
-        
+
         if(font_style.includes('n4') && font_style.includes('i4') && font_style.includes('n5') && font_style.includes('i5'))
         {
           font_str += ':ital,wght@0,400;0,500;1,400;1,500';
