@@ -3,6 +3,7 @@ class Parser
   constructor()
   {
     let _this = this;
+    this.html_root_var = {':root': {}};
     this.html_colors = {};
 		this.open_tag_count = 0;
 		this.fg_arr = [];
@@ -17,8 +18,9 @@ class Parser
     	_this.fg_arr.push(c.match.join('|&'));
     	_this.bg_arr.push(c.match.join('|&bg'));
 
-    	_this.html_colors['.fg' + c.irc] = { 'color': c.match[1] };
-    	_this.html_colors['.bg' + c.irc] = { 'background-color': c.match[1] };
+      _this.html_root_var[':root']['--color-' + c.match[1]] = 'rgb(' + c.rgb.join(',') + ')';
+      _this.html_colors['.fg' + c.irc] = { 'color': 'var(--color-' + c.match[1] + ')' };
+    	_this.html_colors['.bg' + c.irc] = { 'background-color': 'var(--color-' + c.match[1] + ')' };
 
     	c.match.forEach(function(m)
     	{
@@ -81,7 +83,7 @@ class Parser
 
   		if(a.attributes)
   		{
-  			if(!settings.line_reset.value)
+  			if(!page.get_val('line_reset'))
   			{
   				if(_this.current_style.b !== null && !a.attributes.bold) add_reset = true;
   				if(_this.current_style.i !== null && !a.attributes.italic) add_reset = true;
@@ -102,30 +104,30 @@ class Parser
   			}
 
   			if(a.attributes.bold){
-  				if(settings.line_reset.value && _this.current_style.b === null) str += '&b';
-  				if(add_reset || (!settings.line_reset.value && _this.current_style.b === null)) str += '&b';
+  				if(page.get_val('line_reset') && _this.current_style.b === null) str += '&b';
+  				if(add_reset || (!page.get_val('line_reset') && _this.current_style.b === null)) str += '&b';
   				_this.current_style.b = search['&b'];
   			}
   			if(a.attributes.italic){
-  				if(settings.line_reset.value && _this.current_style.i === null) str += '&i';
-  				if(add_reset || (!settings.line_reset.value && _this.current_style.i === null)) str += '&i';
+  				if(page.get_val('line_reset') && _this.current_style.i === null) str += '&i';
+  				if(add_reset || (!page.get_val('line_reset') && _this.current_style.i === null)) str += '&i';
   				_this.current_style.i = search['&i'];
   			}
   			if(a.attributes.underline){
-  				if(settings.line_reset.value && _this.current_style.u === null) str += '&u';
-  				if(add_reset || (!settings.line_reset.value && _this.current_style.u === null)) str += '&u';
+  				if(page.get_val('line_reset') && _this.current_style.u === null) str += '&u';
+  				if(add_reset || (!page.get_val('line_reset') && _this.current_style.u === null)) str += '&u';
   				_this.current_style.u = search['&u'];
   			}
   			if(a.attributes.color && search['&' + a.attributes.color]){
-  				if(settings.line_reset.value && _this.current_style.fg === null) str += search['&' + a.attributes.color].txt;
-  				if(settings.line_reset.value && _this.current_style.fg !== null && _this.current_style.fg.name !== a.attributes.color) str += search['&' + a.attributes.color].txt;
-  				if(add_reset || (!settings.line_reset.value && (_this.current_style.fg === null || _this.current_style.fg.name !== a.attributes.color))) str += search['&' + a.attributes.color].txt;
+  				if(page.get_val('line_reset') && _this.current_style.fg === null) str += search['&' + a.attributes.color].txt;
+  				if(page.get_val('line_reset') && _this.current_style.fg !== null && _this.current_style.fg.name !== a.attributes.color) str += search['&' + a.attributes.color].txt;
+  				if(add_reset || (!page.get_val('line_reset') && (_this.current_style.fg === null || _this.current_style.fg.name !== a.attributes.color))) str += search['&' + a.attributes.color].txt;
   				_this.current_style.fg = search['&' + a.attributes.color];
   			}
   			if(a.attributes.background && search['&bg' + a.attributes.background]){
-  				if(settings.line_reset.value && _this.current_style.bg === null) str += search['&bg' + a.attributes.background].txt;
-  				if(settings.line_reset.value && _this.current_style.bg !== null && _this.current_style.bg.name !== a.attributes.background) str += search['&bg' + a.attributes.background].txt;
-  				if(add_reset || (!settings.line_reset.value && (_this.current_style.bg === null || _this.current_style.bg.name !== a.attributes.background))) str += search['&bg' + a.attributes.background].txt;
+  				if(page.get_val('line_reset') && _this.current_style.bg === null) str += search['&bg' + a.attributes.background].txt;
+  				if(page.get_val('line_reset') && _this.current_style.bg !== null && _this.current_style.bg.name !== a.attributes.background) str += search['&bg' + a.attributes.background].txt;
+  				if(add_reset || (!page.get_val('line_reset') && (_this.current_style.bg === null || _this.current_style.bg.name !== a.attributes.background))) str += search['&bg' + a.attributes.background].txt;
   				_this.current_style.bg = search['&bg' + a.attributes.background];
   			}
   		}
@@ -142,7 +144,7 @@ class Parser
   				let last_break = arr[i - 1] ? arr[i - 1].insert.match(/[\r?\n]$/) : null;
   				let lbreak = (current_break || last_break);
 
-  				if(!(settings.line_reset.value && lbreak) || !settings.line_reset.value || !lbreak)
+  				if(!(page.get_val('line_reset') && lbreak) || !page.get_val('line_reset') || !lbreak)
   				{
   					if(_this.current_style.b !== null || _this.current_style.i !== null || _this.current_style.u !== null ||
   						_this.current_style.fg !== null || _this.current_style.bg !== null){
@@ -177,17 +179,18 @@ class Parser
   {
     let _this = this;
   	this.open_tag_count = 0;
-    let font = page.fonts_popped ? settings.fonts.value : 'Menlo Regular';
+    let font = page.fonts_popped ? page.get_val('line_reset') : 'Menlo Regular';
 
-    var bg_color = settings.background_color_no_alpha.value;
-    if(settings.tab_or_panel.value){
-      bg_color = settings.background_color.value;
+    var bg_color = page.get_val('line_reset');
+    var bg_image = false;
+    if(page.get_val('tab_or_panel')){
+      bg_color = page.get_val('line_reset');
     }
 
-  	let html_style = Object.assign({
+  	let html_style = Object.assign(this.html_root_var, {
   		'body': {
   			'background-color': bg_color,
-  			'color': settings.default_text_color.value,
+  			'color': page.get_val('line_reset'),
   			'margin': 0,
   			'padding': 0,
   			'height': '100%'
@@ -201,17 +204,17 @@ class Parser
   			'display': 'block',
   			'font-family': "'" + font + "', monospace",
   			'white-space': 'pre',
-  			'font-size': settings.font_size.value + 'px',
-  			'line-height': (settings.font_size.value - 1) + 'px',
-  			'height': settings.font_size.value + 'px',
+  			'font-size': page.get_val('line_reset') + 'px',
+  			'line-height': (page.get_val('line_reset') - 1) + 'px',
+  			'height': page.get_val('line_reset') + 'px',
   			'width': 'fit-content',
-        'overflow': 'hidden'
+  			'overflow': 'hidden'
   		},
   		'.b': { 'font-weight': 'bold' },
   		'.i': { 'font-style': 'italic' },
   		'.u': { 'text-decoration': 'underline' },
   		'.r': {
-        'color': settings.default_text_color.value,
+        'color': page.get_val('line_reset'),
         'background-color': 'initial',
         'font-weight': 'normal',
         'font-style': 'initial',
@@ -305,13 +308,13 @@ class Parser
     		con_str = '',
     		current_edit = {attributes:{}};
 
-    if(settings.line_reset.value)
+    if(page.get_val('line_reset'))
     {
     	this.current_style = {fg: null, bg: null, i: null, b: null, u: null};
     	this.since_last_fg = null;
     }
 
-    if(!settings.line_reset.value && (this.current_style.fg !== null || this.current_style.bg !== null ||
+    if(!page.get_val('line_reset') && (this.current_style.fg !== null || this.current_style.bg !== null ||
     	this.current_style.i !== null || this.current_style.b !== null || this.current_style.u !== null))
     {
     	let wrap_span = '<span class="';
@@ -462,12 +465,12 @@ class Parser
     	}
     })
 
-    if(settings.correct_html.value)
+    if(page.get_val('line_reset'))
     {
     	txt_str = txt_str.replace(/\\/g,'\\\\');
     }
 
-    if(settings.line_reset.value && (_this.current_style.fg !== null || _this.current_style.bg !== null || _this.current_style.other !== null))
+    if(page.get_val('line_reset') && (_this.current_style.fg !== null || _this.current_style.bg !== null || _this.current_style.other !== null))
     {
     	txt_str += '\u000f';
     	con_str += '\x1b[0m';

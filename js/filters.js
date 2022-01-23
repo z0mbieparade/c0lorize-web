@@ -8,7 +8,7 @@ class Filter
     {
       if(!settings.text_data.backup)
       {
-        settings.text_data.backup = settings.text_data.value;
+        settings.text_data.backup = page.get_val('text_data');
         $('#reset_filters, #save_filters').show();
       }
 
@@ -22,7 +22,7 @@ class Filter
     {
       if(!settings.text_data.backup)
       {
-        settings.text_data.backup = settings.text_data.value;
+        settings.text_data.backup = page.get_val('text_data');
         $('#reset_filters, #save_filters').show();
       }
 
@@ -79,7 +79,15 @@ class Filter
       return e;
     });
 
-    editor.setContents(contents);
+    if(page.get_val('tab_or_panel') || !page.get_val('plain_or_rich'))
+    {
+      parse.editor_to_text(contents, function(text_data)
+      {
+        page.set_val('text_data', text_data, true)
+      });
+    } else {
+      editor.setContents(contents);
+    }
   }
 
   glitch(glitch_id)
@@ -266,6 +274,14 @@ class Filter
         break;
     }
 
-    editor.setContents(contents);
+    if(page.get_val('tab_or_panel') || !page.get_val('plain_or_rich'))
+    {
+      parse.editor_to_text(contents, function(text_data)
+      {
+        page.set_val('text_data', text_data, true)
+      });
+    } else {
+      editor.setContents(contents);
+    }
   }
 }

@@ -1,0 +1,318 @@
+<div class="dialog" dialog="style_dialog">
+  <span class="row_header" id="fg_color_header">Text Color</span>
+  <div class="panel" id="fg_color_panel_p"><div class="row"></div></div>
+  <span class="row_header" id="bg_color_header">Bkg Color</span>
+  <div class="panel" id="bg_color_panel_p"><div class="row"></div></div>
+  <span class="row_header">Text Style</span>
+  <div id="style_p"></div>
+</div>
+
+<div class="dialog" dialog="download_img_options_dialog">
+  <div class="col_container">
+    <div class="col" style="width:140px;">
+      <div class="row row_px">
+        <label>Font Size:</label>
+        <input type="number" id="img_font_size">
+      </div>
+      <div class="row row_px">
+        <label>Line Height:</label>
+        <input type="number" id="img_line_height">
+      </div>
+      <div class="row">
+        <label for="img_link_font_size_height" class="inline">Link size & height:</label>
+        <label class="switch">
+          <input type="checkbox" id="img_link_font_size_height">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="row row_px">
+        <label>Padding:</label>
+        <input type="number" id="img_padding">
+      </div>
+      <div class="row">
+        <label for="img_transparent_bkg" class="inline">Transparent BKG:</label>
+        <label class="switch">
+          <input type="checkbox" id="img_transparent_bkg">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="row">
+        <label for="img_full_size_preview" class="inline">Full size preview:</label>
+        <label class="switch">
+          <input type="checkbox" id="img_full_size_preview">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="row">
+        <button id="download_img_w_options">Download</button>
+      </div>
+    </div>
+    <div class="col" id="gen_image_container">
+      <span id="img_size"></span>
+      <canvas id="gen_img"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="dialog" dialog="text_settings_dialog">
+  <div class="row">
+    <span class="row_header">Textarea Options</span>
+
+    <label for="line_reset" class="inline">Line Reset:</label>
+    <label class="switch">
+      <input type="checkbox" id="line_reset">
+      <span class="slider"></span>
+    </label>
+    <div class="filler" style="width: 60px;"></div>
+
+    <label for="correct_html" class="inline">Correct HTML:</label>
+    <label class="switch">
+      <input type="checkbox" id="correct_html">
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="row">
+    <label class="inline" for="font">Font:</label>
+    <select id="fonts" style="width: calc(100% - 103px); margin-right: 3px;">
+      <option value="Menlo Regular">Menlo Regular</option>
+    </select>
+    <select id="font_size" style="width: 62px;">
+      <option value="8">8px</option>
+      <option value="9">9px</option>
+      <option value="10">10px</option>
+      <option value="11">11px</option>
+      <option value="12">12px</option>
+      <option value="13">13px</option>
+      <option value="14">14px</option>
+      <option value="15">15px</option>
+      <option value="16">16px</option>
+    </select>
+  </div>
+  <div class="row">
+    <label>Default Text Color: <div class="colors_from_img"></div></label>
+    <input type="text" id="default_text_color" class="spectrum">
+
+    <button class="swap_icon icon" id="swap_colors"></button>
+  </div>
+  <div class="row">
+    <label>Background Color: <div class="colors_from_img"></div></label>
+    <input type="text" id="background_color" class="spectrum">
+    <input type="text" id="background_color_no_alpha" style="display:none;">
+  </div>
+  <div class="row">
+    <label for="text_opacity" class="inline">All Text Opacity:</label>
+    <input type="number" id="text_opacity" style="width: 50px;" min="0" max="100">
+
+    <label class="show_hide" id="show_hide_text">
+      <input type="checkbox" id="show_text">
+      <span class="eye"></span>
+    </label>
+  </div>
+  <div class="row">
+    <span class="row_header">Bacground Image Options</span>
+    <label class="show_hide" id="show_hide_bg_img">
+      <input type="checkbox" id="show_bg_img" disabled="disabled">
+      <span class="eye"></span>
+    </label>
+
+    <input type="file" id="bg_img" accept="image/*">
+    <button id="bg_img_button">Upload Background Image</button>
+
+    <input id="bg_img_url" placeholder="Background Image URL">
+  </div>
+  <div class="row" id="bg_image_options">
+    <label for="bg_x">X:</label>
+    <label for="bg_y">Y:</label>
+    <label for="bg_size">Size:</label>
+
+    <input type="number" id="bg_x">
+    <span>px</span>
+    <input type="number" id="bg_y">
+    <span>px</span>
+    <input type="number" id="bg_size" min="0">
+    <select id="bg_size_type">
+      <option value="%">%</option>
+      <option value="px">px</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <button id="download_settings">Download Settings</button>
+    <input type="file" accept='json/*' id="upload_json_settings">
+    <button id="upload_settings">Upload Settings</button>
+  </div>
+</div>
+
+<div class="dialog" dialog="ascii_settings_dialog">
+  <div class="row" id="ascii_options">
+    <label for="ascii_color" class="inline">In color:</label>
+    <label class="switch">
+      <input type="checkbox" id="ascii_color">
+      <span class="slider"></span>
+    </label>
+
+    <label for="use_bg_color" class="inline">Bkg color behind characters:</label>
+    <label class="switch">
+      <input type="checkbox" id="use_bg_color">
+      <span class="slider"></span>
+    </label>
+
+    <label for="avr_bg_color" class="inline">Average character and bkg color:</label>
+    <label class="switch">
+      <input type="checkbox" id="avr_bg_color">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="row">
+    <label for="px_per_char_width" class="inline">Pixels per character width:</label>
+    <input type="number" id="px_per_char_width" min="3" style="width:45px;">
+
+    <label for="px_per_char_height" class="inline">Pixels per character height:</label>
+    <input type="number" id="px_per_char_height" min="6" style="width:45px;">
+  </div>
+
+  <div class="row" id="ascii_options">
+    <span class="row_header">Characters to Use</span>
+
+    <label for="use_letters" class="inline">A-Z, a-z</label>
+    <label class="switch">
+      <input type="checkbox" id="use_letters">
+      <span class="slider"></span>
+    </label>
+
+    <label for="use_other_char" class="inline">!"#$%&'(*+,-./:;<=>?@[^_`{|~</label>
+    <label class="switch">
+      <input type="checkbox" id="use_other_char">
+      <span class="slider"></span>
+    </label>
+
+    <label for="use_blocks" class="inline">░ ▒ ▓ █</label>
+    <label class="switch">
+      <input type="checkbox" id="use_blocks">
+      <span class="slider"></span>
+    </label>
+    <div class="filler"></div>
+
+    <label for="use_quadrent_side" class="inline">▛▝ ▞ ▁ ▄ ▀ ▐</label>
+    <label class="switch">
+      <input type="checkbox" id="use_quadrent_side">
+      <span class="slider"></span>
+    </label>
+    <div class="filler" style="min-width: 225px;"></div>
+
+    <label for="use_triangles_side" class="inline">▲◢△◤◄▹◬</label>
+    <label class="switch">
+      <input type="checkbox" id="use_triangles_side">
+      <span class="slider"></span>
+    </label>
+    <div class="filler"></div>
+
+    <label for="use_circles_side" class="inline">◐●◍◎◷◗</label>
+    <label class="switch">
+      <input type="checkbox" id="use_circles_side">
+      <span class="slider"></span>
+    </label>
+    <div class="filler" style="min-width: 225px;"></div>
+
+    <label for="use_custom" class="inline">custom</label>
+    <label class="switch">
+      <input type="checkbox" id="use_custom">
+      <span class="slider"></span>
+    </label>
+    <input id="custom_characters" style="width:calc(100% - 124px);">
+  </div>
+  <div class="row" id="ascii_pre_options">
+    <span class="row_header">Image Filter Options (pre-render)</span>
+
+    <label for="invert_img_colors" class="inline">Invert colors:</label>
+    <label class="switch">
+      <input type="checkbox" id="invert_img_colors">
+      <span class="slider"></span>
+    </label>
+    <div class="filler" style="min-width: 40px;"></div>
+
+    <label for="desaturate_img_colors" class="inline">Desaturate colors:</label>
+    <label class="switch">
+      <input type="checkbox" id="desaturate_img_colors">
+      <span class="slider"></span>
+    </label>
+    <div class="filler" style="min-width: 50px;"></div>
+
+    <label for="brightness_img_colors" class="inline">Brightness:</label>
+    <label class="switch">
+      <input type="checkbox" id="brightness_img_colors">
+      <span class="slider"></span>
+    </label>
+    <input id="brightness_img_int" type="number" style="width: 50px;"/>
+    <div class="filler" style="min-width: 50px;"></div>
+
+    <label for="contrast_img_colors" class="inline">Contrast:</label>
+    <label class="switch">
+      <input type="checkbox" id="contrast_img_colors">
+      <span class="slider"></span>
+    </label>
+    <input id="contrast_img_int" type="number" style="width: 50px;"/>
+  </div>
+  <div class="row" id="ascii_post_options">
+    <span class="row_header">Ascii Filter Options (post-render)</span>
+
+    <label for="invert_ascii_colors" class="inline">Invert colors:</label>
+    <label class="switch">
+      <input type="checkbox" id="invert_ascii_colors">
+      <span class="slider"></span>
+    </label>
+    <div class="filler" style="min-width: 40px;"></div>
+
+    <label for="desaturate_ascii_colors" class="inline">Desaturate colors:</label>
+    <label class="switch">
+      <input type="checkbox" id="desaturate_ascii_colors">
+      <span class="slider"></span>
+    </label>
+    <div class="filler" style="min-width: 50px;"></div>
+
+    <label for="brightness_ascii_colors" class="inline">Brightness:</label>
+    <label class="switch">
+      <input type="checkbox" id="brightness_ascii_colors">
+      <span class="slider"></span>
+    </label>
+    <input id="brightness_ascii_int" type="number" style="width: 50px;"/>
+    <div class="filler" style="min-width: 50px;"></div>
+
+    <label for="contrast_ascii_colors" class="inline">Contrast:</label>
+    <label class="switch">
+      <input type="checkbox" id="contrast_ascii_colors">
+      <span class="slider"></span>
+    </label>
+    <input id="contrast_ascii_int" type="number" style="width: 50px;"/>
+  </div>
+  <div class="row" id="covert_ascii">
+    <button id="bg_to_ascii">Convert Image to ASCII</button>
+  </div>
+</div>
+
+<div class="dialog" dialog="filter_settings_dialog">
+  <div class="row">
+    <span class="row_header">Glitch (Random Parts) Filters</span>
+      <button class="glitch" id="glitch_rand">Random</button>
+      <button class="glitch" id="glitch_shift">Color Shift</button>
+      <button class="glitch" id="glitch_invert">Color Invert</button>
+      <button class="glitch" id="glitch_color">Color Change</button>
+      <button class="glitch" id="glitch_streak">Color Streak</button>
+      <button class="glitch" id="glitch_swap">Swap Text</button>
+      <button class="glitch" id="glitch_row_shift">Shift Row</button>
+      <button class="glitch" id="glitch_replace">Replace Character</button>
+  </div>
+  <div class="row">
+    <span class="row_header">Color Shift (Whole Image) Filters</span>
+      <button class="color_shift" id="color_shift_light">Lighten</button>
+      <button class="color_shift" id="color_shift_dark">Darken</button>
+      <button class="color_shift" id="color_shift_tint_left">Hue Tint Left</button>
+      <button class="color_shift" id="color_shift_tint_right">Hue Tint Right</button>
+      <button class="color_shift" id="color_shift_invert">Invert</button>
+  </div>
+  <div class="row">
+    <button id="save_filters">Save Filters</button>
+    <button id="reset_filters">Reset Filters</button>
+  </div>
+</div>

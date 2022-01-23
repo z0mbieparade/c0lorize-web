@@ -13,8 +13,8 @@ class ColorData
         char: X,
         colors: [
           {
-            color_1: 'red',
-            color_2: 'blue',
+            c1: 'red',
+            c2: 'blue',
             id: redID + blueID,
             rgb: {r:n, g:n, b:n} (average color)
           } ... for all color permutations
@@ -23,15 +23,15 @@ class ColorData
     }
   */
   //we'll leave font alone for now because if we change it the data is gonna get more insane
-  build_ascii_mix_color(char_arr)
+  build_ascii_mix_color(char_arr, regen)
   {
     let _this = this;
     ascii_mix_color = ascii_mix_color || {};
     let font = "14px 'Menlo Regular', monospace";
 
-    if(settings.fonts.value)
+    if(page.get_val('fonts'))
     {
-      font = settings.font_size.value + "px '" + settings.fonts.value + "', monospace";
+      font = page.get_val('fonts') + "px '" + page.get_val('fonts') + "', monospace";
     }
 
     char_arr.forEach(function(char)
@@ -53,8 +53,8 @@ class ColorData
               let rgb = _this.average_txt_bg_rgb(char, c.match[1], d.match[1], font);
 
               ascii_mix_color[char_key].colors.push({
-                color_1: c.match[1],
-                color_2: d.match[1],
+                c1: c.match[1],
+                c2: d.match[1],
                 id: c.match[0] + d.match[0],
                 rgb: rgb
               });
@@ -64,17 +64,53 @@ class ColorData
       }
     });
 
-    //console.log(JSON.stringify(ascii_mix_color));
-    //download("ascii_char_colors.json", JSON.stringify(ascii_mix_color))
+    //set to true if we wanna add more characters to the char blend
+    if(regen)
+    {
+      console.log(JSON.stringify(ascii_mix_color));
+      download("ascii_char_colors.json", JSON.stringify(ascii_mix_color))
+    }
   }
 
-  generate_image(callback)
+  generate_image(callback, options)
   {
-    let canvas = document.createElement('canvas'),
-        //canvas = document.getElementById('gen_img'),
+    if(options && options.custom)
+    {
+      options = $.extend({
+        font_size: page.get_val('img_font_size'),
+        line_height: page.get_val('img_font_size'),
+        padding: page.get_val('img_font_size'),
+        transparent_bkg: page.get_val('img_font_size'),
+        $preview: false
+      }, options);
+    } else {
+      options = $.extend({
+        font_size: page.get_val('fonts') ? page.get_val('fonts') : 14,
+        line_height: page.get_val('fonts') ? page.get_val('fonts') : 14,
+        padding: 8,
+        transparent_bkg: false,
+        $preview: false
+      }, options);
+    }
+
+    if(options.$preview && options.$preview.length){
+      options.preview = options.$preview[0];
+    }
+
+    options.font_size = parseInt(options.font_size);
+    options.line_height = parseInt(options.line_height);
+    options.padding = parseInt(options.padding);
+
+    $('#plain_textarea_sizer').addClass('custom_image_size').css({
+      'font-size': options.font_size + 'px',
+      'line-height': options.line_height + 'px',
+      'padding': options.padding + 'px'
+    });
+
+    let canvas = options.preview ? options.preview : document.createElement('canvas'),
         context = canvas.getContext && canvas.getContext('2d'),
-        width = $('#plain_textarea_sizer').width(),
-        height = $('#plain_textarea_sizer').height(),
+        width = $('#plain_textarea_sizer')[0].clientWidth,
+        height = $('#plain_textarea_sizer')[0].clientHeight,
         content = editor.getContents().ops,
         plain_text = editor.getText();
 
@@ -83,24 +119,55 @@ class ColorData
       return false;
     }
 
+    //for whatever reason, this stupid thing is always a little shorter
+    //than the actual image generated, so we're calculating it instead.
+    let calc_height = (options.line_height / 2) + options.padding;
+    content.forEach(function(e, i)
+    {
+      let txt_arr = e.insert.split(/\r\n|\r|\n/);
+      //this is an empty line break
+      if(e.insert.match(/^(\r\n|\r|\n)+$/))
+      {
+        calc_height = calc_height + ((txt_arr.length - 1) * options.line_height);
+      }
+      //this has multiple line breaks in it
+      else if(e.insert.match(/\r\n|\r|\n/))
+      {
+        txt_arr.forEach(function(txt)
+        {
+          calc_height = calc_height + options.line_height;
+        })
+      }
+    })
+    calc_height = calc_height + options.padding;
+
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    let font_size = settings.font_size.value ? parseInt(settings.font_size.value) : 14;
-    let font =  font_size + 'px "' + ( page.fonts_popped ? settings.fonts.value : 'Menlo Regular' ) + '", monospace';
+    let font =  options.font_size + 'px "' + ( page.fonts_popped ? page.get_val('fonts') : 'Menlo Regular' ) + '", monospace';
 
-    //$('#gen_img').css('max-width', width + 'px')
-
-    canvas.height = height + 16;
+    canvas.height = calc_height;
     canvas.width = width;
+
+    if(options.preview){
+      options.$preview.css({
+        'max-width': width,
+        'max-height': calc_height
+      });
+    }
+
     context.font = font;
 
-    context.fillStyle = settings.background_color_no_alpha.value;
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    if(!options.transparent_bkg)
+    {
+      context.fillStyle = page.get_val('fonts');
+      context.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
     context.textBaseline = 'middle';
     context.font = font;
 
-    let text_top = font_size;
-    let left_text = 8;
+    let text_top = (options.line_height / 2) + options.padding;
+    let text_left = options.padding;
 
     let make_text = function(txt, attr)
     {
@@ -116,48 +183,53 @@ class ColorData
         if(attr.background)
         {
           context.fillStyle = attr.background;
-          context.fillRect(left_text, text_top - (font_size / 2), text_width, font_size);
+          context.fillRect(text_left, text_top - (options.line_height / 2), text_width, options.line_height);
         }
       }
 
-      context.fillStyle = attr && attr.color ? attr.color : settings.default_text_color.value;
+      context.fillStyle = attr && attr.color ? attr.color : page.get_val('fonts');
 
       if(attr && attr.underline)
       {
         context.beginPath();
-        context.moveTo(left_text, text_top + (font_size / 2));
-        context.lineTo(left_text + text_width, text_top + (font_size / 2));
+        context.moveTo(text_left, text_top + (options.font_size / 2));
+        context.lineTo(text_left + text_width, text_top + (options.font_size / 2));
         context.strokeStyle = context.fillStyle;
         context.stroke();
       }
 
-      context.fillText(txt, left_text, text_top);
+      context.fillText(txt, text_left, text_top);
     }
 
     content.forEach(function(e, i)
     {
       let txt_arr = e.insert.split(/\r\n|\r|\n/);
+
+      //this is an empty line break
       if(e.insert.match(/^(\r\n|\r|\n)+$/))
       {
-        text_top = text_top + ((txt_arr.length - 1) * font_size);
-        left_text = 8;
+        text_top = text_top + ((txt_arr.length - 1) * options.line_height);
+        text_left = options.padding;
       }
+      //this has multiple line breaks in it
       else if(e.insert.match(/\r\n|\r|\n/))
       {
         txt_arr.forEach(function(txt)
         {
           make_text(txt, e.attributes);
-          text_top = text_top + 14;
-          left_text = 8;
+          text_top = text_top + options.line_height;
+          text_left = options.padding;
         })
       }
+      //no line breaks
       else
       {
         make_text(e.insert, e.attributes);
-        left_text = left_text + context.measureText(e.insert).width;
+        text_left = text_left + context.measureText(e.insert).width;
       }
     })
 
+    $('#plain_textarea_sizer').removeClass('custom_image_size').removeAttr('style');
     callback(canvas.toDataURL("image/png"));
   }
 
@@ -178,11 +250,12 @@ class ColorData
     }
 
     context.font = font;
+    let height_metrics = context.measureText('█');
     let metrics = context.measureText(char);
     let width = metrics.width;
-    let height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+    let height = height_metrics.actualBoundingBoxAscent + height_metrics.actualBoundingBoxDescent;
 
-    canvas.height = height + 2;
+    canvas.height = height;
     canvas.width = width;
 
     context.fillStyle = bg;

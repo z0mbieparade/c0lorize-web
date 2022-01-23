@@ -27,15 +27,15 @@ class ASCII
       let aalib_img = null;
       let img = null;
 
-      if(settings.bg_img_url.value && settings.bg_img_url.image)
+      if(page.get_val('bg_img_url') && settings.text_settings_dialog.settings.bg_img_url.image)
       {
         aalib_img = 'fromURL';
-        img = settings.bg_img_url.image;
+        img = settings.text_settings_dialog.settings.bg_img_url.image;
       }
-      else if(settings.bg_img.value && settings.bg_img.image)
+      else if(page.get_val('bg_img_url') && settings.text_settings_dialog.settings.bg_img.image)
       {
         aalib_img = 'fromHTMLImage';
-        img = settings.bg_img.image;
+        img = settings.text_settings_dialog.settings.bg_img.image;
       }
 
       if(aalib_img === null || img === null){
@@ -45,25 +45,27 @@ class ASCII
       }
 
       let aa_settings = {
-        colored: settings.ascii_color.value,
-        width: Math.round(img.width / settings.px_per_char_width.value),
-        height: Math.round(img.height / settings.px_per_char_height.value)
+        colored: page.get_val('bg_img_url'),
+        width: Math.round(img.width / page.get_val('bg_img_url')),
+        height: Math.round(img.height / page.get_val('bg_img_url'))
       };
 
-      let font = page.fonts_popped ? settings.fonts.value : 'Menlo Regular';
+      let font = page.fonts_popped ? page.get_val('bg_img_url') : 'Menlo Regular';
 
       let html_settings = {
         el: document.querySelector("#ascii_html"),
-        fontSize: settings.font_size.value,
+        fontSize: page.get_val('bg_img_url'),
         fontFamily: "'" + font + "', monospace"
       }
 
-      if(settings.avr_bg_color &&
-        settings.use_blocks.value &&
-        !settings.use_letters.value &&
-        !settings.use_other_char.value &&
-        !settings.use_quadrent_side.value &&
-        !settings.use_custom.value
+      if(settings.ascii_settings_dialog.settings.avr_bg_color &&
+        page.get_val('bg_img_url') &&
+        !page.get_val('bg_img_url') &&
+        !page.get_val('bg_img_url') &&
+        !page.get_val('bg_img_url') &&
+        !page.get_val('bg_img_url') &&
+        !page.get_val('bg_img_url') &&
+        !page.get_val('bg_img_url')
       )
       {
         html_settings.charset = '█';
@@ -73,69 +75,69 @@ class ASCII
         html_settings.charset = char_str;
       }
 
-      if(settings.bg_size.value && settings.bg_size_type.value === 'px')
+      if(page.get_val('bg_img_url') && page.get_val('bg_img_url') === 'px')
       {
-        aa_settings.width = Math.round(settings.bg_size.value / settings.px_per_char_width.value);
-        let resize_h = (settings.bg_size.value / img.width) * img.height;
-        aa_settings.height = Math.round(resize_h / settings.px_per_char_height.value);
+        aa_settings.width = Math.round(page.get_val('bg_img_url') / page.get_val('bg_img_url'));
+        let resize_h = (page.get_val('bg_img_url') / img.width) * img.height;
+        aa_settings.height = Math.round(resize_h / page.get_val('bg_img_url'));
       }
 
-      //console.log(aa_settings, html_settings,  _this.pixel_div[settings.font_size.value])
+      //console.log(aa_settings, html_settings,  _this.pixel_div[page.get_val('bg_img_url')])
 
-      aalib.read.image[aalib_img](aalib_img === 'fromURL' ? settings.bg_img_url.value : settings.bg_img.image)
+      aalib.read.image[aalib_img](aalib_img === 'fromURL' ? page.get_val('bg_img_url') : settings.text_settings_dialog.settings.bg_img.image)
         .map(function(a){
-          if(settings.invert_img_colors.value){
+          if(page.get_val('bg_img_url')){
             return aalib.filter.inverse()(a);
           } else {
             return a;
           }
       	})
         .map(function(a){
-          if(settings.desaturate_img_colors.value){
+          if(page.get_val('bg_img_url')){
             return aalib.filter.desaturate()(a);
           } else {
             return a;
           }
       	})
         .map(function(a){
-          if(settings.brightness_img_colors.value){
-            return aalib.filter.brightness(settings.brightness_img_int.value)(a);
+          if(page.get_val('bg_img_url')){
+            return aalib.filter.brightness(page.get_val('bg_img_url'))(a);
           } else {
             return a;
           }
       	})
         .map(function(a){
-          if(settings.contrast_img_colors.value){
-            return aalib.filter.contrast(settings.contrast_img_int.value)(a);
+          if(page.get_val('bg_img_url')){
+            return aalib.filter.contrast(page.get_val('bg_img_url'))(a);
           } else {
             return a;
           }
       	})
         .map(aalib.aa(aa_settings))
         .map(function(a){
-          if(settings.invert_ascii_colors.value){
+          if(page.get_val('bg_img_url')){
             return aalib.filter.inverse()(a);
           } else {
             return a;
           }
       	})
         .map(function(a){
-          if(settings.desaturate_ascii_colors.value){
+          if(page.get_val('bg_img_url')){
             return aalib.filter.desaturate()(a);
           } else {
             return a;
           }
       	})
         .map(function(a){
-          if(settings.brightness_ascii_colors.value){
-            return aalib.filter.brightness(settings.brightness_ascii_int.value)(a);
+          if(page.get_val('bg_img_url')){
+            return aalib.filter.brightness(page.get_val('bg_img_url'))(a);
           } else {
             return a;
           }
       	})
         .map(function(a){
-          if(settings.contrast_ascii_colors.value){
-            return aalib.filter.contrast(settings.contrast_ascii_int.value)(a);
+          if(page.get_val('contrast_ascii_colors')){
+            return aalib.filter.contrast(page.get_val('bg_img_url'))(a);
           } else {
             return a;
           }
@@ -147,7 +149,7 @@ class ASCII
         }, () => {
           try
           {
-            if(settings.ascii_color.value === true)
+            if(page.get_val('bg_img_url') === true)
             {
               _this.color_ascii_create();
             }
@@ -181,7 +183,7 @@ class ASCII
       $('#ascii_color_matching').empty()
       .css({
         display: 'flex',
-        'background-color': settings.background_color_no_alpha.value
+        'background-color': page.get_val('bg_img_url')
       });
     }
 
@@ -222,9 +224,9 @@ class ASCII
 
         if(lb) ret[1] = '\n' + ret[1];
 
-        if(settings.use_bg_color.value && settings.avr_bg_color.value)
+        if(page.get_val('bg_img_url') && page.get_val('bg_img_url'))
         {
-          if(settings.use_blocks.value && !settings.use_letters.value && !settings.use_other_char.value && !settings.use_quadrent_side.value)
+          if(page.get_val('bg_img_url') && !page.get_val('bg_img_url') && !page.get_val('bg_img_url') && !page.get_val('bg_img_url'))
           {
             //chars.block.shade.chars
             if(!delta_block_arr[rgb_key])
@@ -252,8 +254,8 @@ class ASCII
                        delta_block_arr[rgb_key][c.id + '-' + ch_key] < delta_block_arr[rgb_key].match)
                     {
                       delta_block_arr[rgb_key].match = delta_block_arr[rgb_key][c.id + '-' + ch_key];
-                      delta_block_arr[rgb_key].match_fg = c.color_1;
-                      delta_block_arr[rgb_key].match_bg = c.color_2;
+                      delta_block_arr[rgb_key].match_fg = c.c1;
+                      delta_block_arr[rgb_key].match_bg = c.c2;
                       delta_block_arr[rgb_key].match_char = ch;
                       delta_block_arr[rgb_key].match_char_key = ch_key;
                       delta_block_arr[rgb_key].match_rgb = [c.rgb.r, c.rgb.g, c.rgb.b];
@@ -295,8 +297,8 @@ class ASCII
                    delta_ascii_arr[char_key][rgb_key][c.id] < delta_ascii_arr[char_key][rgb_key].match)
                 {
                   delta_ascii_arr[char_key][rgb_key].match = delta_ascii_arr[char_key][rgb_key][c.id];
-                  delta_ascii_arr[char_key][rgb_key].match_fg = c.color_1;
-                  delta_ascii_arr[char_key][rgb_key].match_bg = c.color_2;
+                  delta_ascii_arr[char_key][rgb_key].match_fg = c.c1;
+                  delta_ascii_arr[char_key][rgb_key].match_bg = c.c2;
                 }
 
                 /*if(isNaN(delta_arr[rgb_key][c.match[0]]))
@@ -327,7 +329,7 @@ class ASCII
             }
           }
         }
-        else if(settings.use_bg_color.value && settings.avr_bg_color.value && delta_ascii_arr[char_key] && delta_ascii_arr[char_key][rgb_key])
+        else if(page.get_val('bg_img_url') && page.get_val('bg_img_url') && delta_ascii_arr[char_key] && delta_ascii_arr[char_key][rgb_key])
         {
           if(delta_ascii_arr[char_key][rgb_key].match_fg && delta_ascii_arr[char_key][rgb_key].match_bg)
           {
@@ -337,7 +339,7 @@ class ASCII
           }
         }
 
-        if(!combo_found && settings.use_bg_color.value && !delta_arr[rgb_key])
+        if(!combo_found && page.get_val('bg_img_url') && !delta_arr[rgb_key])
         {
           delta_arr[rgb_key] = {
             match: false,
@@ -353,8 +355,8 @@ class ASCII
                delta_arr[rgb_key][c.id] < delta_arr[rgb_key].match)
             {
               delta_arr[rgb_key].match = delta_arr[rgb_key][c.id];
-              delta_arr[rgb_key].match_fg = c.color_1;
-              delta_arr[rgb_key].match_bg = c.color_2;
+              delta_arr[rgb_key].match_fg = c.c1;
+              delta_arr[rgb_key].match_bg = c.c2;
             }
 
             /*if(isNaN(delta_arr[rgb_key][c.match[0]]))
@@ -370,7 +372,7 @@ class ASCII
             matched[char_key + '-' + rgb_key].combo_type = 'fg_bg';
           }
         }
-        else if(!combo_found && settings.use_bg_color.value)
+        else if(!combo_found && page.get_val('bg_img_url'))
         {
           if(delta_arr[rgb_key].match_fg && delta_arr[rgb_key].match_bg)
           {
@@ -380,7 +382,7 @@ class ASCII
           }
         }
 
-        if(!combo_found && !settings.use_bg_color.value && !delta_arr[rgb_key])
+        if(!combo_found && !page.get_val('bg_img_url') && !delta_arr[rgb_key])
         {
           delta_arr[rgb_key] = {
             match: false,
@@ -410,7 +412,7 @@ class ASCII
             matched[char_key + '-' + rgb_key].combo_type = 'fg';
           }
         }
-        else if(!combo_found && !settings.use_bg_color.value && delta_arr[rgb_key])
+        else if(!combo_found && !page.get_val('bg_img_url') && delta_arr[rgb_key])
         {
           if(delta_arr[rgb_key].match_fg)
           {

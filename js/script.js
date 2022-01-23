@@ -61,16 +61,15 @@ let update_html = function()
 {
   parse.text_to_html($('#text_data').val(), function(html_doc_data, irc_data, editor_data)
   {
-    let $iframe = $('<iframe allowtransparency="true" />').attr('src', 'data:text/html;charset=utf-8,' + encodeURI(html_doc_data));
+    let $iframe = $('<iframe allowtransparency="true" />').attr('srcdoc', html_doc_data);
 
-    if(settings.tab_or_panel.value){
-      $('#html_wrap_side_by_side').empty().append($iframe);
+    if(page.get_val('tab_or_panel')){
+      $('#html_wrap_side_by_side #iframe_wrap').empty().append($iframe); //.css('opacity', page.get_val('text_opacity') / 100));
     } else {
       $('#html #html_wrap').empty().append($iframe);
     }
 
     editor.setContents(editor_data, 'silent');
-
     let plain_text = editor.getText();
     $('#plain_textarea_sizer').html(plain_text.replace(/[\n\r]/mg, '<br/>'));
   });
@@ -80,27 +79,32 @@ let update_text = function()
 {
   parse.editor_to_text(editor.getContents(), function(text_data)
   {
-    page.set_val('text_data', text_data, false)
+    page.set_val('text_data', text_data, page.get_val('tab_or_panel'))
   });
 }
 
 let update_char_str = function()
 {
   char_str = '';
-  if(settings.use_letters.value) char_str += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  if(settings.use_other_char.value) char_str += "!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~";
-  if(settings.use_blocks.value) char_str += chars.block.shade.chars.join('');
-  if(settings.use_quadrent_side.value){
+  if(page.get_val('text_opacity')) char_str += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  if(page.get_val('text_opacity')) char_str += "!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~";
+  if(page.get_val('text_opacity')) char_str += chars.block.shade.chars.join('');
+  if(page.get_val('text_opacity')){
     char_str += chars.block.solid_tb.chars.join('');
     char_str += chars.block.solid_lr.chars.join('');
     char_str += chars.block.quadrent.chars.join('');
   }
-  if(settings.use_custom.value) char_str += settings.custom_characters.value;
+  if(page.get_val('text_opacity')){
+    char_str += chars.shape.solid_tri.chars.join('');
+    char_str += chars.shape.outline_tri.chars.join('');
+  }
+  if(page.get_val('text_opacity')) char_str += chars.shape.circles.chars.join('')
+  if(page.get_val('text_opacity')) char_str += page.get_val('text_opacity');
 }
 
 let insert_char = function(char)
 {
-  if(settings.plain_or_rich.value)
+  if(page.get_val('tab_or_panel'))
   {
     let selection = editor.getSelection();
     let caret_pos = selection ? selection.index : editor.getLength();
@@ -113,8 +117,8 @@ let insert_char = function(char)
     let caret_pos = document.getElementById("text_data").selectionStart;
     let caret_end = document.getElementById("text_data").selectionEnd;
 
-    let new_value = settings.text_data.value.substring(0, caret_pos) + char
-                  + settings.text_data.value.substring(caret_end);
+    let new_value = page.get_val('tab_or_panel').substring(0, caret_pos) + char
+                  + page.get_val('tab_or_panel').substring(caret_end);
 
     page.set_val('text_data', new_value);
     $('#text_data').focus();
@@ -124,20 +128,26 @@ let insert_char = function(char)
   }
 }
 
-try
+let text_width = function(txt)
 {
-  page.load_page_settings(JSON.parse(localStorage.getItem("c0lorize_settings")));
-} catch(e) {
-  console.error(e);
+  let $sizer = $('<span id="txt_sizer">' + txt + '</span>').css({
+    'visibility': 'hidden',
+    'position': 'absolute',
+    'z-index': -1,
+    'left': 0,
+    'top': 0
+  });
+  $('body').append($sizer);
+  let width = $sizer[0].clientWidth;
+  $('#txt_sizer').remove();
+  return width;
 }
+
 
 $(document).ready(function()
 {
-  page.load_page();
-
-  $('#bg_img_button').on('click', function(){
-    $('#bg_img').click();
-  })
+  page.doc_loaded = true;
+  page.test_load_page();
 
   //do magic downloady stuff
   $('#download_text').on('click', function(){
@@ -153,39 +163,11 @@ $(document).ready(function()
       download("c0lorize.html", html_doc_data);
     });
   })
+
   $('#download_img').on('click', function(){
     cdat.generate_image(function(img){
       download("c0lorize.png", img);
     });
-  })
-  $('#download_settings').on('click', function(){
-    download("c0lorize_settings.json", JSON.stringify(save_settings));
-  })
-  $('#upload_settings').on('click', function(){
-    $('#upload_json_settings').click();
-  })
-  $('#upload_json_settings').on('change', function(e){
-    try
-    {
-      let reader = new FileReader();
-      reader.onload = function(file)
-      {
-        let data = file.target.result;
-        if(file.target.result.match(/^data:application\/json;base64,/))
-        {
-          data = JSON.parse(atob(data.replace('data:application/json;base64,','')));
-          page.load_page_settings(data);
-          location.reload();
-        }
-        else
-        {
-          alert('Not a JSON file.')
-        }
-      }
-      reader.readAsDataURL(e.target.files[0]);
-    } catch(e) {
-      console.error(e);
-    }
   })
 
   $('#reset_demo1').on('click', function(){
@@ -200,15 +182,15 @@ $(document).ready(function()
       text_data: $('#demo_2').val(),
       default_text_color: '#25100a',
       background_color: 'rgba(226,220,204,.7)',
-      bg_img_url: 'https://i.imgur.com/7A6914H.gif',
+      bg_img_url: './inc/demo_2.gif',
       ascii_color: false,
       use_letters: true,
       use_other_char: true,
       use_blocks: true,
       use_quadrent_side: true,
-      bg_x: -8,
-      bg_y: -19,
-      bg_size: 692
+      bg_x: -1,
+      bg_y: -26,
+      bg_size: 667
     })
   });
   $('#reset_demo3').on('click', function(){
@@ -217,7 +199,7 @@ $(document).ready(function()
       text_data: $('#demo_3').val(),
       default_text_color: '#20be08',
       background_color: 'rgba(228, 7, 58, 0.7)',
-      bg_img_url: 'https://i.imgur.com/HLsZ9ao.png',
+      bg_img_url: './inc/demo_3.png',
       bg_size: 800,
       use_bg_color: true,
       use_letters: false,
@@ -241,42 +223,6 @@ $(document).ready(function()
     {
       $('#wtf_is_this').addClass('hide_this');
     }
-  })
-
-  $('#swap_colors').on('click', function(){
-    let bg_color = settings.background_color.value;
-    let fg_color = settings.default_text_color.value;
-    page.set_val('background_color', fg_color);
-    page.set_val('default_text_color', bg_color);
-  })
-
-  //panel dropdowns
-  let panel_open = false;
-  $(document).on('click', function(e)
-  {
-    if($(e.target).hasClass('panel_open') && !$(e.target).attr('disabled'))
-    {
-      let id = $(e.target).attr('id');
-      $('.panel').each(function(){
-        $(this).removeClass('open');
-      });
-      $('.panel#' + id + '_panel').addClass('open');
-      panel_open = '.panel#' + id + '_panel';
-    }
-    else if (panel_open && $(e.target).closest(panel_open).length === 0)
-    {
-      $('.panel').each(function(){
-        $(this).removeClass('open');
-      });
-      panel_open = false;
-    }
-  });
-
-  filter.build_filters();
-
-  $('#bg_to_ascii').on('click', function()
-  {
-    ascii.convert();
   })
 
   $('#loader').removeClass('loading initial');
