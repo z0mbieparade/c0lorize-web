@@ -61,13 +61,6 @@
         $string);
 }
 
-@font-face {
-	font-family: 'Menlo Regular', monospace;
-	font-style: normal;
-	font-weight: normal;
-	src: local('Menlo Regular'), url('Menlo-Regular.woff') format('woff');
-}
-
 :root {
 	--color-white: white;
 	--color-black: black;

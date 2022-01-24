@@ -40,6 +40,7 @@ $settings = $set;
   <link rel="stylesheet" href="css/lib/spectrum.min.css">
   <link rel="stylesheet" href="css/lib/quill.snow.css">
 
+	<link rel="stylesheet" href="css/fonts/fonts.css">
   <link rel="stylesheet" href="css/style.css">
   <body>
 

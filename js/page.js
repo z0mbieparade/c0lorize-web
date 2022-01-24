@@ -5,7 +5,11 @@ class Page
     let _this = this;
 
     this.font_select = {
-      'Menlo Regular': ['n4']
+      'Menlo Regular': ['n4'],
+      'Andale Mono': ['n4'],
+      'Dark Courier': ['n4','i4','n5','i5'],
+      'Fixedsys Excelsior': ['n4'],
+      'Unispace': ['n4','i4','n5','i5']
     }
     this.doc_loaded = false;
     this.fonts_loaded = false;
